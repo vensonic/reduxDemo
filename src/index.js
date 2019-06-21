@@ -5,8 +5,9 @@ import App from './App';
 //从react-redux中引入provider
 import { Provider } from 'react-redux';
 //引入store
-import  store  from "./store";
-// 3 用 Provider 将app包裹起来 并且传递store 到 app上 
+import store from './store';
+//将App用Provider标签包裹起来
+//将store通过属性的方式传递到App组件上
 ReactDOM.render(
   <Provider store={store}>
     <App />

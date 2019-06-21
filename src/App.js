@@ -1,64 +1,113 @@
 import React, { Component,Fragment } from 'react';
-//1.从react-redux中接收一个连接器
+//引入react-redux中的connect,用于链接组件和store
 import { connect } from 'react-redux';
-//引入actionCreator
-import { numAdd, numSub, numInit } from "./store/actionCreator";
-class App extends Component {
+//引入actionCreator中的actions
+import {
+  numsADD,
+  numsSUB,
+  appADD,
+  appSUB,
+  initAppNum
+} from "./store/actionCreator";
+//增加数字功能组件
+class AddBtn extends Component {
   constructor(props) {
     super(props);
     this.state = {  }
   }
   render() { 
+    return ( 
+      <button onClick={this.props.addNum}>+</button>
+     );
+  }
+}
+ //数字递减功能组件
+ 
+class SubBtn extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  render() {
+    return <button onClick={this.props.subNum}>-</button>;
+  }
+}
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {  }
+  }
+  componentDidMount(){
+    this.props.app_init();
+  }
+  render() { 
     return (
       <Fragment>
-        数据:{this.props.num}
+        <p>使用数据:{this.props.num}</p>
+        <AddBtn {...this.props} />
+        <SubBtn {...this.props} />
+        <hr />
         <div>
-          <button onClick={this.props.num_add}>+</button>
-          <button onClick={this.props.num_sub}>-</button>
+          苹果数量:{this.props.appNum}
+          <button onClick={this.props.app_add}>+</button>
+          <button onClick={this.props.app_sub}>-</button>
         </div>
       </Fragment>
     );
   }
-  //钩子函数中发起请求
-  componentDidMount(){
-    this.props.num_init()
-  }
 }
- //3.定义一个映射将state和props映射
- const mapStateToProps = (state)=>{
-   console.log(state);
-   
-   return {
-     num: state.vensonReducer.num
-   };
- }
- //新增事件和属性映射
- const mapDispatch = (dispatch)=>{
-   return {
-     num_add:()=>{
-       //创建一个action
-      //  const action = {
-      //    type: NUM_ADD,
-      //    value: 1
-      //  };
-       //开始派发action 会触发 管理员中的代码
-       dispatch(numAdd(2));
-     },
-     num_sub:()=>{
-      // const action = {
-      //   type: NUM_SUB,
-      //   value: 1
-      // };
-      dispatch(numSub(1))
-     },
-     //初始化数字
-     num_init:()=>{
-       dispatch(numInit());
-     }
-   }
- }
- // 2.将store中的输入传递到 app中
+ //将store中的数据映射到props上
+  const mapStateToProps = (state)=>{
+    return {
+      num: state.numReducer.payload.num,
+      appNum:state.appReducer.payload.num
+    };
+  }
+  //创建action,并将action链接到store上
+  const mapDispatchToProps = (dispatch)=>{
+    return {
+      //添加数据事件
+      addNum: () => {
+        //创建action
+        // const action = {
+        //   //type是个自定义字符串,用于才reducer中判断是何种操作
+        //   type: NUM_ADD,
+        //   //在reducer中操做state所需数据
+        //   value: 1
+        // };
+        //派发行为 ---将action派发到reducer中
+        dispatch(numsADD(2));
+      },
+      //自减数据事件
+      subNum: () => {
+        //创建action
+        // const action = {
+        //   //type是个自定义字符串,用于才reducer中判断是何种操作
+        //   type: NUM_SUB,
+        //   //在reducer中操做state所需数据
+        //   value: 1
+        // };
+        //派发行为 ---将action派发到reducer中
+        dispatch(numsSUB(1));
+      },
+      //苹果自增
+      app_add: () => {
+        dispatch(appADD(1));
+      },
+      //苹果自减
+      app_sub: () => {
+        dispatch(appSUB(2));
+      },
+      //苹果初始化
+      app_init:()=>{
+        //通过dispatch来调用action
+       dispatch(initAppNum());
+      }
+    };
+  }
+ //使用connect将store的数据通过props的方式传递到App上 connect函数的返回值是一个函数
 export default connect(
   mapStateToProps,
-  mapDispatch
+  mapDispatchToProps
 )(App);
